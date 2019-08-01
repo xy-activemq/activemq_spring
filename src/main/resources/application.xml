@@ -19,17 +19,25 @@
         <property name="maxConnections" value="100"></property>
     </bean>
 
-    <!-- 配置destination -->
+    <!-- 配置destination  queue-->
     <bean class="org.apache.activemq.command.ActiveMQQueue" id="activeMQQueue">
         <!--相当于-->
         <constructor-arg index="0" value="activemq-spring"></constructor-arg>
     </bean>
 
+    <!-- 配置destination  topic-->
+    <bean class="org.apache.activemq.command.ActiveMQTopic" id="activeMQTopic">
+        <!--相当于-->
+        <constructor-arg index="0" value="activemq-spring"></constructor-arg>
+    </bean>
+
+
     <!--整合spring-->
     <bean class="org.springframework.jms.support.converter.SimpleMessageConverter" id="messageConverter"></bean>
     <bean class="org.springframework.jms.core.JmsTemplate" id="jmsTemplate">
         <property name="connectionFactory" ref="jmsFactory"/>
-        <property name="defaultDestination" ref="activeMQQueue"/>
+        <property name="defaultDestination" ref="activeMQTopic"/>
+        <!--<property name="defaultDestination" ref="activeMQQueue"/>-->
         <property name="messageConverter" ref="messageConverter"/>
         <property name="timeToLive" value="3000"></property>
     </bean>
