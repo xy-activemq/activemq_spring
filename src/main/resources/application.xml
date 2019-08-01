@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+    <context:component-scan base-package="com.xywei.activemq.queuetest,com.xywei.activemq.topic"/>
+
+    <!-- 配置connection factory -->
+    <bean id="activeMQConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="tcp://192.168.36.132:61616"></property>
+    </bean>
+    <bean id="jmsFactory" class="org.apache.activemq.pool.PooledConnectionFactory" destroy-method="stop">
+        <property name="connectionFactory" ref="activeMQConnectionFactory">
+        </property>
+        <property name="maxConnections" value="100"></property>
+    </bean>
+
+    <!-- 配置destination -->
+    <bean class="org.apache.activemq.command.ActiveMQQueue" id="activeMQQueue">
+        <!--相当于-->
+        <constructor-arg index="0" value="activemq-spring"></constructor-arg>
+    </bean>
+
+    <!--整合spring-->
+    <bean class="org.springframework.jms.support.converter.SimpleMessageConverter" id="messageConverter"></bean>
+    <bean class="org.springframework.jms.core.JmsTemplate" id="jmsTemplate">
+        <property name="connectionFactory" ref="jmsFactory"/>
+        <property name="defaultDestination" ref="activeMQQueue"/>
+        <property name="messageConverter" ref="messageConverter"/>
+        <property name="timeToLive" value="3000"></property>
+    </bean>
+
+</beans>
